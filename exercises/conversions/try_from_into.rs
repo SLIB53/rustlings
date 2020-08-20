@@ -11,8 +11,6 @@ struct Color {
     blue: u8,
 }
 
-// I AM NOT DONE
-
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
 // You need create implementation for a tuple of three integer,
@@ -26,6 +24,18 @@ struct Color {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = String;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        fn is_in_range(c: i16) -> bool {
+            c >= 0 && c <= 255
+        }
+
+        match tuple {
+            (r, g, b) if is_in_range(r) && is_in_range(g) && is_in_range(b) => Ok(Color {
+                red: r as u8,
+                green: g as u8,
+                blue: b as u8,
+            }),
+            _ => Err(String::from("out of range")),
+        }
     }
 }
 
@@ -33,6 +43,7 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = String;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        Color::try_from((arr[0], arr[1], arr[2]))
     }
 }
 
@@ -40,6 +51,11 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = String;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() == 3 {
+            Color::try_from([slice[0], slice[1], slice[2]])
+        } else {
+            Err(String::from("slice is not size 3"))
+        }
     }
 }
 
